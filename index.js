@@ -1,11 +1,19 @@
 import Discord from "discord.js"
+import dotenv from "dotenv"
+
 import { getLiveVideoURLFromChannelID, twitterUrlPurifier } from "./urlUtils.js"
 import { handleDoubleCheck, handleStreameIsRemainingOnline, handleStreamerIsOn } from "./ytLiveState.js"
-import dotenv from "dotenv"
 dotenv.config()
 const toSeconds = (seconds => seconds * 1000)
 const toMinutes = (minutes => 60_000 * minutes)
+
 const token = process.env.discord_token
+const guildId = process.env.discord_serverId
+const channelId = process.env.discordChannelId
+const ytChannelId = process.env.youtube_channelId
+
+const pollingIntervalTimer = toSeconds(37)
+const timeToDelayCheck = toMinutes(5)
 
 const client = new Discord.Client({
     intents: [
@@ -15,20 +23,16 @@ const client = new Discord.Client({
         "GUILD_MESSAGE_TYPING"
     ]
 })
-const guildId = process.env.discord_serverId
-const channelId = process.env.discordChannelId
-const ytChannelId = process.env.youtube_channelId
-const pollingIntervalTimer = toSeconds(37)
-const timeToDelayCheck = toMinutes(5)
 
 client.on("messageCreate", async (message) => {
     const lowerCaseCommand = message.content.toLowerCase()
-    const { purifiedTwitterUrl } = twitterUrlPurifier(lowerCaseCommand)
 
+    const { purifiedTwitterUrl } = twitterUrlPurifier(lowerCaseCommand)
     if (purifiedTwitterUrl) {
         message.suppressEmbeds(true)
         message.reply(purifiedTwitterUrl)
     }
+
     if (lowerCaseCommand.includes("!live")) {
         const { canonicalURL, isStreaming } = await getLiveVideoURLFromChannelID(ytChannelId);
         console.log({ canonicalURL, isStreaming })
@@ -39,7 +43,7 @@ client.on("messageCreate", async (message) => {
 })
 
 client.on("ready", () => {
-    console.log("bot is online")
+    console.log("Project Based Chat is online")
     const guild = client.guilds.cache.get(guildId);
     const channel = guild.channels.cache.get(channelId);
 
@@ -84,8 +88,5 @@ client.on("ready", () => {
     }
     handleYouTubePoll()
 })
-
-
-
 
 client.login(token)
