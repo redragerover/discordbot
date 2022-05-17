@@ -1,3 +1,4 @@
+# Project Based Chat
 Discord bot with example of handling the calling of polling youtube data for indication if a stream is online. For educational purposes only -- I do not encourage anyone to use this.
 
 
@@ -18,3 +19,9 @@ I used node version `v18.1.0`
 6. preventing irratic youtube server side changing of a stream going from online to offline through `streamerIsOn` being delayed from being called again or losing live status.
 
 See my implementation in `index.js` for details.
+
+## TODOs
+Youtube Live stream alerts: [x]
+Twitter URL suppression when has spyware query params: [x]
+Fake news filter command []
+Live stream dashboard for 2022 riots []
