@@ -21,7 +21,10 @@ I used node version `v18.1.0`
 See my implementation in `index.js` for details.
 
 ## TODOs
-Youtube Live stream alerts: [x]
-Twitter URL suppression when has spyware query params: [x]
-Fake news filter command []
-Live stream dashboard for 2022 riots []
+- [x] Youtube Live stream alerts
+- [x] Twitter URL suppression when has spyware query params
+- [] Fake news filter command
+- [] Live stream dashboard for 2022 riots
+
+### Nice to haves
+- Own 'fxtwitter' bot. Determine if a tweet is a video or not.
