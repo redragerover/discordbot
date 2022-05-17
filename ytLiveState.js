@@ -5,20 +5,20 @@
  * @param {function} actionWhenDoubleCheckIsTrue 
  * @returns 
  */
- const handleDoubleCheck = (state, actionWhenDoubleCheckIsTrue, isStreaming) =>{
-    
-    const {setDoubleCheckIfOffline, setStreamIsAlreadyOnline} = state
-    
+const handleDoubleCheck = (state, actionWhenDoubleCheckIsTrue, isStreaming) => {
 
-    if(!state.doubleCheckIfOffline){
+    const { setDoubleCheckIfOffline, setStreamIsAlreadyOnline } = state
+
+
+    if (!state.doubleCheckIfOffline) {
         return
     }
 
-    if(isStreaming){
+    if (isStreaming) {
         setStreamIsAlreadyOnline(true)
         return;
     }
-    if(!isStreaming){
+    if (!isStreaming) {
         setDoubleCheckIfOffline(false)
         setStreamIsAlreadyOnline(false)
         actionWhenDoubleCheckIsTrue()
@@ -32,19 +32,19 @@
  * @param {function} actionWhenStreamIsOn 
  * @returns 
  */
-const handleStreamerIsOn = (state, actionWhenStreamIsOn, isStreaming, timeToDelayCheck)=>{
-    
-    const {setStreamIsAlreadyOnline, setStreamerIsOn} = state
+const handleStreamerIsOn = (state, actionWhenStreamIsOn, isStreaming, timeToDelayCheck) => {
+
+    const { setStreamIsAlreadyOnline, setStreamerIsOn } = state
     const sendMessageToEveryone = isStreaming && !state.streamIsAlreadyOnline && !state.doubleCheckIfOffline
-    if(sendMessageToEveryone){
+    if (sendMessageToEveryone) {
         //send message to everyone
         setStreamIsAlreadyOnline(true)
         setStreamerIsOn(true)
         actionWhenStreamIsOn()
-        setTimeout(()=> setStreamerIsOn(false), timeToDelayCheck)
+        setTimeout(() => setStreamerIsOn(false), timeToDelayCheck)
         return;
-    } 
-    if(!sendMessageToEveryone){
+    }
+    if (!sendMessageToEveryone) {
         console.log("stream offline")
         return
     }
@@ -55,18 +55,18 @@ const handleStreamerIsOn = (state, actionWhenStreamIsOn, isStreaming, timeToDela
  * @param {object} state 
  * @returns 
  */
-const handleStreameIsRemainingOnline = (state, isStreaming) =>{
+const handleStreameIsRemainingOnline = (state, isStreaming) => {
 
-    const {setDoubleCheckIfOffline, setStreamIsAlreadyOnline} = state
-    if(isStreaming && state.streamIsAlreadyOnline){
+    const { setDoubleCheckIfOffline, setStreamIsAlreadyOnline } = state
+    if (isStreaming && state.streamIsAlreadyOnline) {
         console.log("streamer is still online")
         return
     }
-    if(!isStreaming && !state.doubleCheckIfOffline && state.streamIsAlreadyOnline){
+    if (!isStreaming && !state.doubleCheckIfOffline && state.streamIsAlreadyOnline) {
         setDoubleCheckIfOffline(true)
         setStreamIsAlreadyOnline(false)
         return;
     }
 }
 
-export {handleStreameIsRemainingOnline, handleStreamerIsOn, handleDoubleCheck }
+export { handleStreameIsRemainingOnline, handleStreamerIsOn, handleDoubleCheck }
