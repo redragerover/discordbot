@@ -15,9 +15,9 @@ const client = new Discord.Client({
         "GUILD_MESSAGE_TYPING"
     ]
 })
-const guildId = "926798796996898897"
-const channelId = "926798797844135948"
-const ytChannelId = "UCPHWVzGcW-iozudjp8U984g"
+const guildId = process.env.discord_serverId
+const channelId = process.env.discordChannelId
+const ytChannelId = process.env.youtube_channelId
 const pollingIntervalTimer = toSeconds(37)
 const timeToDelayCheck = toMinutes(5)
 
