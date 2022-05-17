@@ -1,5 +1,5 @@
 import Discord from "discord.js"
-import { getLiveVideoURLFromChannelID } from "./urlUtils.js"
+import { getLiveVideoURLFromChannelID, twitterUrlPurifier } from "./urlUtils.js"
 import { handleDoubleCheck, handleStreameIsRemainingOnline, handleStreamerIsOn } from "./ytLiveState.js"
 import dotenv from "dotenv"
 dotenv.config()
@@ -10,7 +10,9 @@ const token = process.env.discord_token
 const client = new Discord.Client({
     intents: [
         "GUILDS",
-        "GUILD_MESSAGES"
+        "GUILD_MESSAGES",
+        "GUILD_BANS",
+        "GUILD_MESSAGE_TYPING"
     ]
 })
 const guildId = "926798796996898897"
@@ -21,7 +23,12 @@ const timeToDelayCheck = toMinutes(5)
 
 client.on("messageCreate", async (message) => {
     const lowerCaseCommand = message.content.toLowerCase()
+    const { purifiedTwitterUrl } = twitterUrlPurifier(lowerCaseCommand)
 
+    if (purifiedTwitterUrl) {
+        message.suppressEmbeds(true)
+        message.reply(purifiedTwitterUrl)
+    }
     if (lowerCaseCommand.includes("!live")) {
         const { canonicalURL, isStreaming } = await getLiveVideoURLFromChannelID(ytChannelId);
         console.log({ canonicalURL, isStreaming })

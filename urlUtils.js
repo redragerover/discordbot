@@ -19,4 +19,19 @@ const getLiveVideoURLFromChannelID = async (channelID) => {
     return { canonicalURL, isStreaming }
 }
 
-export { getLiveVideoURLFromChannelID }
+const twitterUrlPurifier = (message) => {
+    let purifiedTwitterUrl = ''
+    if (!message.includes("twitter.com/")) {
+        return { purifiedTwitterUrl }
+    }
+    const isDirtyTwitterUrl = message.includes("?s=") || message.includes("&t=")
+    if (!isDirtyTwitterUrl) {
+        return { purifiedTwitterUrl };
+    }
+    const twitterUrl = message.substring(message.indexOf("twitter.com/"), message.indexOf("?s="))
+    purifiedTwitterUrl = `https://${twitterUrl}`
+
+    return { purifiedTwitterUrl }
+}
+
+export { getLiveVideoURLFromChannelID, twitterUrlPurifier }
