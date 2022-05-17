@@ -13,18 +13,11 @@ const client = new Discord.Client({
     ]
 })
 const guildId = "926798796996898897"
-//main 926798797844135948
-const channelId = "929303551384117248"
-// const ytChannelId = "UCPHWVzGcW-iozudjp8U984g"
-// const pollingIntervalTimer = toSeconds(37)
-// const timeToDelayCheck = toMinutes(5) 
+const channelId = "926798797844135948"
+const ytChannelId = "UCPHWVzGcW-iozudjp8U984g"
+const pollingIntervalTimer = toSeconds(37)
+const timeToDelayCheck = toMinutes(5) 
 
-const ytChannelId = "UCSJ4gkVC6NrvII8umztf0Ow"
-const pollingIntervalTimer = toSeconds(5)
-const timeToDelayCheck = toSeconds(13) 
-
-
-// const ytChannelId = "UCSJ4gkVC6NrvII8umztf0Ow"
 client.on("messageCreate", async (message) =>{
     const lowerCaseCommand = message.content.toLowerCase()
     
@@ -43,23 +36,24 @@ client.on("messageCreate", async (message) =>{
  * @param {function} actionWhenDoubleCheckIsTrue 
  * @returns 
  */
-const handleDoubleCheck = async (state, actionWhenDoubleCheckIsTrue) =>{
+const handleDoubleCheck = (state, actionWhenDoubleCheckIsTrue, isStreaming) =>{
     console.log("handleDoubleCheck")
-    const {setDoubleCheckIfOffline, setStreamerIsAlreadyOnline} = state
+    const {setDoubleCheckIfOffline, setStreamIsAlreadyOnline} = state
     
-    const {isStreaming} = await getLiveVideoURLFromChannelID(ytChannelId)
 
-    if(state.doubleCheckIfOffline){
-    actionWhenDoubleCheckIsTrue()
-
+    if(!state.doubleCheckIfOffline){
+        return
     }
+
     if(isStreaming){
-        setStreamerIsAlreadyOnline(true)
+        setStreamIsAlreadyOnline(true)
         return;
     }
-    if(!isStreaming && !state.streamerIsAlreadyOnline){
+    if(!isStreaming){
         setDoubleCheckIfOffline(false)
-        setStreamerIsAlreadyOnline(false)
+        setStreamIsAlreadyOnline(false)
+        actionWhenDoubleCheckIsTrue()
+        console.log("stream permanently offline")
     }
 }
 
@@ -69,20 +63,20 @@ const handleDoubleCheck = async (state, actionWhenDoubleCheckIsTrue) =>{
  * @param {function} actionWhenStreamIsOn 
  * @returns 
  */
-const handleStreamerIsOn = async (state, actionWhenStreamIsOn)=>{
+const handleStreamerIsOn = (state, actionWhenStreamIsOn, isStreaming)=>{
     console.log("handleStreamerIsOn")
-    const {setStreamerIsAlreadyOnline, setStreamerIsOn} = state
-    const {isStreaming} = await getLiveVideoURLFromChannelID(ytChannelId)
-    const sendMessageToEveryone = isStreaming && !state.streamerIsAlreadyOnline && !state.doubleCheckIfOffline
+    const {setStreamIsAlreadyOnline, setStreamerIsOn} = state
+    const sendMessageToEveryone = isStreaming && !state.streamIsAlreadyOnline && !state.doubleCheckIfOffline
     if(sendMessageToEveryone){
         //send message to everyone
-        setStreamerIsAlreadyOnline(true)
+        setStreamIsAlreadyOnline(true)
         setStreamerIsOn(true)
         actionWhenStreamIsOn()
         setTimeout(()=> setStreamerIsOn(false), timeToDelayCheck)
         return;
     } 
     if(!sendMessageToEveryone){
+        console.log("stream offline")
         return
     }
 }
@@ -92,18 +86,16 @@ const handleStreamerIsOn = async (state, actionWhenStreamIsOn)=>{
  * @param {object} state 
  * @returns 
  */
-const handleStreameIsRemainingOnline = async (state) =>{
+const handleStreameIsRemainingOnline = (state, isStreaming) =>{
     console.log("handleStreamIs", {})
-    const {isStreaming} = await getLiveVideoURLFromChannelID(ytChannelId)
-    console.log({isStreaming})
-    const {setDoubleCheckIfOffline, setStreamerIsAlreadyOnline} = state
-    if(isStreaming){
-        setStreamerIsAlreadyOnline(true)
+    const {setDoubleCheckIfOffline, setStreamIsAlreadyOnline} = state
+    if(isStreaming && state.streamIsAlreadyOnline){
         console.log("streamer is still online")
         return
     }
-    if(!isStreaming && !state.doubleCheckIfOffline && !state.streamIsAlreadyOnline){
+    if(!isStreaming && !state.doubleCheckIfOffline && state.streamIsAlreadyOnline){
         setDoubleCheckIfOffline(true)
+        setStreamIsAlreadyOnline(false)
         return;
     }
 }
@@ -113,7 +105,6 @@ client.on("ready", () =>{
     const channel = guild.channels.cache.get(channelId);
     
     const handleYouTubePoll = () =>{
-        
         const state = {
             streamerIsOn : false,
             streamIsAlreadyOnline : false,
@@ -121,38 +112,37 @@ client.on("ready", () =>{
             setStreamerIsOn(val){
                 state.streamerIsOn= val
             },
-            setStreamerIsAlreadyOnline(val){
-                state.streamerIsAlreadyOnline= val
+            setStreamIsAlreadyOnline(val){
+                state.streamIsAlreadyOnline= val
             },
             setDoubleCheckIfOffline(val){
                 console.log(state.doubleCheckIfOffline)
             state.doubleCheckIfOffline=val
         },
     }
-    if(state.streamerIsOn){
-        return
-    }
-    
-    const interval = setInterval(() =>{
-        console.log({state})
-        handleStreameIsRemainingOnline(state)
-        handleDoubleCheck(state, () =>{
-            // send streamer has gone permanently offline
-            channel.send("PA has gone offline")
-            client.user.setActivity('stream offline', { type: 'PLAYING' });
-
-        })
-        
-        
-        handleStreamerIsOn(state, async () =>{
-            //send message only once
-            const {canonicalURL} = await getLiveVideoURLFromChannelID(ytChannelId)
-            channel.send(`stream is live ${canonicalURL}`)
-            client.user.setActivity('stream online', { type: 'PLAYING' });
+    const handleInterval = async ()=>{
+        await getLiveVideoURLFromChannelID(ytChannelId).then(({isStreaming, canonicalURL})=>{            
+            handleStreameIsRemainingOnline(state, isStreaming)
+            handleDoubleCheck(state, () =>{
+                // send streamer has gone permanently offline
+                channel.send("PA has gone offline")
+                client.user.setActivity('stream offline', { type: 'PLAYING' });
+                
+            }, isStreaming)
             
-        })
-        
-    }, toSeconds(pollingIntervalTimer) )
+            
+            handleStreamerIsOn(state,() =>{
+                //send message only once
+                channel.send(`stream is live @everyone ${canonicalURL}`)
+                client.user.setActivity('stream online', { type: 'PLAYING' });
+                
+            }, isStreaming)
+            return;
+        }).catch(err=>console.log(err))   
+}
+
+
+    const interval = setInterval(handleInterval, pollingIntervalTimer )
 }
 handleYouTubePoll()
 })
