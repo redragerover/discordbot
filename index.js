@@ -1,5 +1,6 @@
 import Discord from "discord.js"
 import { getLiveVideoURLFromChannelID } from "./urlUtils.js"
+import { handleDoubleCheck, handleStreameIsRemainingOnline, handleStreamerIsOn } from "./ytLiveState.js"
 import dotenv from "dotenv"
 dotenv.config()
 const toSeconds= (seconds=> seconds*1000)
@@ -30,75 +31,6 @@ client.on("messageCreate", async (message) =>{
     }
 })
 
-/**
- * 
- * @param {object} state 
- * @param {function} actionWhenDoubleCheckIsTrue 
- * @returns 
- */
-const handleDoubleCheck = (state, actionWhenDoubleCheckIsTrue, isStreaming) =>{
-    console.log("handleDoubleCheck")
-    const {setDoubleCheckIfOffline, setStreamIsAlreadyOnline} = state
-    
-
-    if(!state.doubleCheckIfOffline){
-        return
-    }
-
-    if(isStreaming){
-        setStreamIsAlreadyOnline(true)
-        return;
-    }
-    if(!isStreaming){
-        setDoubleCheckIfOffline(false)
-        setStreamIsAlreadyOnline(false)
-        actionWhenDoubleCheckIsTrue()
-        console.log("stream permanently offline")
-    }
-}
-
-/**
- * 
- * @param {object} state 
- * @param {function} actionWhenStreamIsOn 
- * @returns 
- */
-const handleStreamerIsOn = (state, actionWhenStreamIsOn, isStreaming)=>{
-    console.log("handleStreamerIsOn")
-    const {setStreamIsAlreadyOnline, setStreamerIsOn} = state
-    const sendMessageToEveryone = isStreaming && !state.streamIsAlreadyOnline && !state.doubleCheckIfOffline
-    if(sendMessageToEveryone){
-        //send message to everyone
-        setStreamIsAlreadyOnline(true)
-        setStreamerIsOn(true)
-        actionWhenStreamIsOn()
-        setTimeout(()=> setStreamerIsOn(false), timeToDelayCheck)
-        return;
-    } 
-    if(!sendMessageToEveryone){
-        console.log("stream offline")
-        return
-    }
-}
-
-/**
- * 
- * @param {object} state 
- * @returns 
- */
-const handleStreameIsRemainingOnline = (state, isStreaming) =>{
-    console.log("handleStreamIs", {})
-    const {setDoubleCheckIfOffline, setStreamIsAlreadyOnline} = state
-    if(isStreaming && state.streamIsAlreadyOnline){
-        console.log("streamer is still online")
-        return
-    }
-    if(!isStreaming && !state.doubleCheckIfOffline && state.streamIsAlreadyOnline){
-        setDoubleCheckIfOffline(true)
-        setStreamIsAlreadyOnline(false)
-        return;
-    }
-}
 client.on("ready", () =>{
     console.log("bot is online")
     const guild = client.guilds.cache.get(guildId);
@@ -128,7 +60,7 @@ client.on("ready", () =>{
                 channel.send("PA has gone offline")
                 client.user.setActivity('stream offline', { type: 'PLAYING' });
                 
-            }, isStreaming)
+            }, isStreaming, timeToDelayCheck)
             
             
             handleStreamerIsOn(state,() =>{
@@ -140,7 +72,6 @@ client.on("ready", () =>{
             return;
         }).catch(err=>console.log(err))   
 }
-
 
     const interval = setInterval(handleInterval, pollingIntervalTimer )
 }
