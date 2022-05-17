@@ -3,10 +3,11 @@ import dotenv from "dotenv"
 
 import { getLiveVideoURLFromChannelID, twitterUrlPurifier } from "./urlUtils.js"
 import { handleDoubleCheck, handleStreameIsRemainingOnline, handleStreamerIsOn } from "./ytLiveState.js"
-dotenv.config()
-const toSeconds = (seconds => seconds * 1000)
-const toMinutes = (minutes => 60_000 * minutes)
 
+const toSeconds = seconds => seconds * 1000
+const toMinutes = minutes => 60_000 * minutes
+
+dotenv.config()
 const token = process.env.discord_token
 const guildId = process.env.discord_serverId
 const channelId = process.env.discordChannelId
