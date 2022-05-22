@@ -2,3 +2,6 @@ node_modules
 demoresponse.html
 .env
 package-lock.json
+utils/winston-daily-rotate-file.txt
+combined.log
+error.log

@@ -1,10 +1,11 @@
-
+import {logger} from "./logger.cjs"
 /**
  * 
  * @param {object} state 
  * @param {function} actionWhenDoubleCheckIsTrue 
  * @returns 
  */
+logger.info("hi")
 const handleDoubleCheck = (state, actionWhenDoubleCheckIsTrue, isStreaming) => {
 
     const { setDoubleCheckIfOffline, setStreamIsAlreadyOnline } = state
@@ -16,6 +17,7 @@ const handleDoubleCheck = (state, actionWhenDoubleCheckIsTrue, isStreaming) => {
 
     if (isStreaming) {
         setStreamIsAlreadyOnline(true)
+        setDoubleCheckIfOffline(false)
         return;
     }
     if (!isStreaming) {
@@ -45,7 +47,7 @@ const handleStreamerIsOn = (state, actionWhenStreamIsOn, isStreaming, timeToDela
         return;
     }
     if (!sendMessageToEveryone) {
-        console.log("stream offline")
+        console.log(`stream is online: ${state.streamIsAlreadyOnline}`)
         return
     }
 }
@@ -59,7 +61,6 @@ const handleStreameIsRemainingOnline = (state, isStreaming) => {
 
     const { setDoubleCheckIfOffline, setStreamIsAlreadyOnline } = state
     if (isStreaming && state.streamIsAlreadyOnline) {
-        console.log("streamer is still online")
         return
     }
     if (!isStreaming && !state.doubleCheckIfOffline && state.streamIsAlreadyOnline) {

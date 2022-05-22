@@ -3,8 +3,6 @@ import { parse } from 'node-html-parser'
 import fetch from 'node-fetch'
 
 
-// process.argv is array of arguments passed in console
-
 const getLiveVideoURLFromChannelID = async (channelID) => {
 
     const response = await fetch(`https://youtube.com/channel/${channelID}/live`)
