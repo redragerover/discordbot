@@ -2,9 +2,16 @@
   "name": "pabot",
   "version": "1.0.0",
   "main": "index.js",
+  "types": "src/types",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
+  },
+  "compilerOptions": {
+    "typeRoots": [
+      "src/types",
+      "node_modules/@types"
+    ]
   },
   "type": "module",
   "keywords": [],
@@ -13,10 +20,7 @@
   "dependencies": {
     "discord.js": "^13.7.0",
     "dotenv": "^16.0.1",
-    "node-fetch": "^3.2.4",
-    "node-html-parser": "^5.3.3",
-    "winston": "^3.7.2",
-    "winston-daily-rotate-file": "^4.6.1"
+    "ytlivemanager": "github:redragerover/ytlivemanager"
   },
   "description": ""
 }
