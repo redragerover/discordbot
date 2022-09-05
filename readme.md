@@ -1,5 +1,5 @@
 # Project Based Chat
-Discord bot. That'sliterally all. He utilizes my awesome `ytlivemanager`package though to ping Gyrok when the stream is live.
+Discord bot. That's literally all. He utilizes my awesome `ytlivemanager`package though to ping Gyrok when the stream is live.
 
 
 installing:
