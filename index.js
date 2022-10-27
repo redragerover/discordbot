@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import {
   twitterUrlPurifier,
   getLiveVideoURLFromChannelID,
-} from "../ytlivemanager/urlUtils.js";
+} from "ytlivemanager/urlUtils.js";
 import { catchingTubePoll, mainYtPoll } from "./src/ytPolling.js";
 dotenv.config();
 
