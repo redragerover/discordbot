@@ -36,8 +36,10 @@ client.on("messageCreate", async (message) => {
   }
 
   if (lowerCaseCommand.includes("!live")) {
-    const { canonicalURL } = await getLiveVideoURLFromChannelID(ytChannelId);
-    if (canonicalURL) {
+    const { canonicalURL, isStreaming } = await getLiveVideoURLFromChannelID(
+      ytChannelId
+    );
+    if (canonicalURL && isStreaming) {
       message.reply(canonicalURL);
       return;
     }
