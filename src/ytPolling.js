@@ -1,7 +1,4 @@
-import {
-  handleYouTubePoll,
-  handleGroupYoutubePoll,
-} from "../../ytlivemanager/statehandler.js";
+import { handleYouTubePoll, handleGroupYoutubePoll } from "ytlivemanager";
 import { CatchChnl, DiscordIDs } from "../utils/constants.js";
 
 const ytChannelId = process.env.youtube_channelId;
