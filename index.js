@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 
 import {
   twitterUrlPurifier,
+  UTM_Purifier,
   getLiveVideoURLFromChannelID,
 } from "ytlivemanager/urlUtils.js";
 import { catchingTubePoll, mainYtPoll } from "./src/ytPolling.js";
@@ -28,6 +29,11 @@ client.on("messageCreate", async (message) => {
   if (purifiedTwitterUrl) {
     message.suppressEmbeds(true);
     message.reply(purifiedTwitterUrl);
+  }
+  const utmFreeURL = UTM_Purifier(lowerCaseCommand);
+  if (!purifiedTwitterUrl && utmFreeURL) {
+    message.suppressEmbeds(true);
+    message.reply(utmFreeURL);
   }
 
   if (lowerCaseCommand.includes("!troop")) {
