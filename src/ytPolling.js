@@ -48,3 +48,23 @@ export const mainYtPoll = (client) => {
     streamToLive: streamToLive,
   });
 };
+export const statusHandler = (client) => {
+  const streamToLive = (canonicalURL) => {
+    client.user.setActivity(`Portland Andy IS...`, {
+      type: "STREAMING",
+      url: canonicalURL,
+    });
+  };
+  const streamGoesOffline = () => {
+    client.user.setActivity("stream offline", { type: "PLAYING" });
+  };
+
+  handleYouTubePoll({
+    identifier: ytChannelId,
+    streamGoesOffline: streamGoesOffline,
+    streamToLive: streamToLive,
+    options: {
+      postIntervalDelayCustom: 1000 * 60,
+    },
+  });
+};
