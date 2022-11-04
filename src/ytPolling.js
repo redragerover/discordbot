@@ -50,7 +50,7 @@ export const mainYtPoll = (client) => {
 };
 export const statusHandler = (client) => {
   const streamToLive = (canonicalURL) => {
-    client.user.setActivity(`Portland Andy IS...`, {
+    client.user.setActivity(`🔴LIVE w/ PORTLAND ANDY!🔴`, {
       type: "STREAMING",
       url: canonicalURL,
     });

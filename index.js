@@ -6,7 +6,11 @@ import {
   UTM_Purifier,
   getLiveVideoURLFromChannelID,
 } from "ytlivemanager/urlUtils.js";
-import { catchingTubePoll, mainYtPoll } from "./src/ytPolling.js";
+import {
+  catchingTubePoll,
+  mainYtPoll,
+  statusHandler,
+} from "./src/ytPolling.js";
 dotenv.config();
 
 const token = process.env.discord_token;
@@ -19,7 +23,11 @@ const client = new Discord.Client({
 });
 
 client.on("messageCreate", async (message) => {
-  if (message.author.bot || isTestingInProd) {
+  if (
+    message.author.bot ||
+    isTestingInProd ||
+    nodeArguments.includes("status")
+  ) {
     return;
   }
   const lowerCaseCommand = message.content.toLowerCase();
@@ -56,8 +64,14 @@ client.on("messageCreate", async (message) => {
 
 client.on("ready", () => {
   console.log("Project Based Chat is online");
+  if (nodeArguments.includes("status")) {
+    statusHandler(client);
+    return;
+  }
+  console.log("normal mode initialized");
   mainYtPoll(client);
   !isTestingInProd && catchingTubePoll(client);
+  statusHandler(client);
 });
 
 client.login(token);
