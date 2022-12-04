@@ -24,12 +24,14 @@ const client = new Discord.Client({
 const execute = (command, cb) => {
   exec(command, (err, stdout, stderr) => cb(stdout));
 };
-
+const uwuifyFilter = (toBeUwufied) => {
+  const nonRecursiveCommand = toBeUwufied.replaceAll("!uwuify", "").trim();
+  const cleanMessage = nonRecursiveCommand.replace("'", "").trim();
+  return cleanMessage;
+};
 client.on("messageCreate", async (message) => {
   if (message.content.includes("!uwuify")) {
-    const nonRecursiveCommand = message.content.replace("!uwuify", "");
-    const cleanMessage = nonRecursiveCommand.replace("'", "");
-
+    const cleanMessage = uwuifyFilter(message.content);
     if (message.type === "REPLY") {
       const repliedTo = await message.channel.messages.fetch(
         message.reference.messageId
@@ -40,23 +42,24 @@ client.on("messageCreate", async (message) => {
       }
       if (repliedTo.content) {
         //@TODO MUST ADD !UWUIFY filter
-        execute(
-          `echo '${repliedTo.content.replace("'", '"')}.' | uwuify`,
-          (stdout) => {
-            if (stdout) {
-              repliedTo.reply(stdout);
-            }
+        const repliedToClean = uwuifyFilter(repliedTo.content);
+        execute(`echo '${repliedToClean}.' | uwuify`, (stdout) => {
+          if (stdout) {
+            repliedTo.reply(stdout);
           }
-        );
+        });
       }
     } else if (message.content.trim() === "!uwuify") {
       message.reply("provide a message");
     } else {
-      execute(`echo '${cleanMessage}' | uwuify`, (stdout) => {
-        if (stdout) {
-          message.reply(stdout);
+      execute(
+        `echo '${cleanMessage.replace("!uwuify", "")}' | uwuify`,
+        (stdout) => {
+          if (stdout) {
+            message.reply(stdout);
+          }
         }
-      });
+      );
     }
     setTimeout(() => message.delete(), 2400);
   }
