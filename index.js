@@ -27,11 +27,19 @@ const execute = (command, cb) => {
 
 client.on("messageCreate", async (message) => {
   if (message.content.includes("!uwuify")) {
+    const nonRecursiveCommand = message.content.replace("!uwuify", "");
+    const cleanMessage = nonRecursiveCommand.replace("'", "");
+
     if (message.type === "REPLY") {
       const repliedTo = await message.channel.messages.fetch(
         message.reference.messageId
       );
+      if (repliedTo.author.id === client.user.id) {
+        message.reply("uwuify yourself, filthy degenerate");
+        return;
+      }
       if (repliedTo.content) {
+        //@TODO MUST ADD !UWUIFY filter
         execute(
           `echo '${repliedTo.content.replace("'", '"')}.' | uwuify`,
           (stdout) => {
@@ -44,8 +52,7 @@ client.on("messageCreate", async (message) => {
     } else if (message.content.trim() === "!uwuify") {
       message.reply("provide a message");
     } else {
-      const msgContent = message.content.replace("!uwuify", "");
-      execute(`echo '${msgContent.replace("'", '"')}' | uwuify`, (stdout) => {
+      execute(`echo '${cleanMessage}' | uwuify`, (stdout) => {
         if (stdout) {
           message.reply(stdout);
         }
