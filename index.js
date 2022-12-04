@@ -11,8 +11,8 @@ import {
   mainYtPoll,
   statusHandler,
 } from "./src/ytPolling.js";
+import { exec } from "child_process";
 dotenv.config();
-
 const token = process.env.discord_token;
 const ytChannelId = process.env.youtube_channelId;
 
@@ -21,8 +21,38 @@ const isTestingInProd = nodeArguments.includes("test");
 const client = new Discord.Client({
   intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_BANS", "GUILD_MESSAGE_TYPING"],
 });
+const execute = (command, cb) => {
+  exec(command, (err, stdout, stderr) => cb(stdout));
+};
 
 client.on("messageCreate", async (message) => {
+  if (message.content.includes("!uwuify")) {
+    if (message.type === "REPLY") {
+      const repliedTo = await message.channel.messages.fetch(
+        message.reference.messageId
+      );
+      if (repliedTo.content) {
+        execute(
+          `echo '${repliedTo.content.replace("'", '"')}.' | uwuify`,
+          (stdout) => {
+            if (stdout) {
+              repliedTo.reply(stdout);
+            }
+          }
+        );
+      }
+    } else if (message.content.trim() === "!uwuify") {
+      message.reply("provide a message");
+    } else {
+      const msgContent = message.content.replace("!uwuify", "");
+      execute(`echo '${msgContent.replace("'", '"')}' | uwuify`, (stdout) => {
+        if (stdout) {
+          message.reply(stdout);
+        }
+      });
+    }
+    setTimeout(message.delete(), 2400);
+  }
   if (
     message.author.bot ||
     isTestingInProd ||

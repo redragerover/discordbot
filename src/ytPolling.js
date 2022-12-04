@@ -35,7 +35,7 @@ export const mainYtPoll = (client) => {
   );
 
   const streamToLive = (canonicalURL) => {
-    const liveMessage = `${DiscordIDs.users.gyrok} stream is live @everyone @everyone @everyone ${canonicalURL}`;
+    const liveMessage = `${DiscordIDs.users.gyrok} the stream is alive @everyone @everyone @everyone ${canonicalURL}`;
     channel.send(!isTestingInProd ? liveMessage : "I am testing in prod");
   };
   const streamGoesOffline = () => {
@@ -49,6 +49,7 @@ export const mainYtPoll = (client) => {
   });
 };
 export const statusHandler = (client) => {
+  client.user.setActivity("Andy offline", { type: "PLAYING" });
   const streamToLive = (canonicalURL) => {
     client.user.setActivity(`🔴LIVE w/ PORTLAND ANDY!🔴`, {
       type: "STREAMING",
@@ -56,7 +57,7 @@ export const statusHandler = (client) => {
     });
   };
   const streamGoesOffline = () => {
-    client.user.setActivity("stream offline", { type: "PLAYING" });
+    client.user.setActivity("Andy offline", { type: "PLAYING" });
   };
 
   handleYouTubePoll({
@@ -64,7 +65,8 @@ export const statusHandler = (client) => {
     streamGoesOffline: streamGoesOffline,
     streamToLive: streamToLive,
     options: {
-      postIntervalDelayCustom: 1000 * 60,
+      enableLogs: true,
+      postIntervalDelayCustom: 1000 * 120,
     },
   });
 };
