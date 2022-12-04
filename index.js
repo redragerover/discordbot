@@ -51,7 +51,7 @@ client.on("messageCreate", async (message) => {
         }
       });
     }
-    setTimeout(message.delete(), 2400);
+    setTimeout(() => message.delete(), 2400);
   }
   if (
     message.author.bot ||
