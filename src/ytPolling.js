@@ -1,4 +1,8 @@
-import { handleYouTubePoll, handleGroupYoutubePoll } from "ytlivemanager";
+import {
+  handleYouTubePoll,
+  handleGroupYoutubePoll,
+  handleRumbleGroupPoll,
+} from "ytlivemanager";
 import { CatchChnl, DiscordIDs } from "../utils/constants.js";
 
 const ytChannelId = process.env.youtube_channelId;
@@ -20,7 +24,12 @@ export const catchingTubePoll = (client) => {
     console.log("channel went offline");
   };
   handleGroupYoutubePoll({
-    identifiers: Object.values(CatchChnl),
+    identifiers: Object.values(CatchChnl.youtube),
+    streamToLive: streamToGroupLive,
+    streamGoesOffline: streamChannelOffline,
+  });
+  handleRumbleGroupPoll({
+    identifiers: Object.values(CatchChnl.rumble),
     streamToLive: streamToGroupLive,
     streamGoesOffline: streamChannelOffline,
   });

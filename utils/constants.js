@@ -2,13 +2,17 @@
  * youtube catching channels
  **/
 export const CatchChnl = {
-  ccunit: "UC_z833aw6yvHJ9QxGpphY3w",
-  puggypug: "UCWpELcUYIOeyQlQKdk8HqOA",
-  elizXBeth: "UC2F7dUU60nToblBd3mRuopg",
-  oklaPPinc: "UCeHTX27uAaWnRhRMI5fXYBg",
-  cPredPatrol: "UCAgIOx-Wmvon7nWJiFTzRdg",
-  skeetGuy: "UCadMpX28EMXTCYYBg1DUJIg",
-  peopleVPred: "UCdw011ip9uxWVtA_OY1uH9w",
+  rumble: {
+    puggy: "PredatorPoachers",
+  },
+  youtube: {
+    ccunit: "UC_z833aw6yvHJ9QxGpphY3w",
+    puggypug: "UCWpELcUYIOeyQlQKdk8HqOA",
+    oklaPPinc: "UCeHTX27uAaWnRhRMI5fXYBg",
+    cPredPatrol: "UCAgIOx-Wmvon7nWJiFTzRdg",
+    skeetGuy: "UCadMpX28EMXTCYYBg1DUJIg",
+    peopleVPred: "UCdw011ip9uxWVtA_OY1uH9w",
+  },
 };
 
 export const DiscordIDs = {
