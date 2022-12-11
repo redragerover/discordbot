@@ -20,8 +20,6 @@
   "dependencies": {
     "discord.js": "^13.7.0",
     "dotenv": "^16.0.1",
-    "puppeteer": "^19.3.0",
-    "rumblemanager": "github:redragerover/rumblemanager",
     "ytlivemanager": "github:redragerover/ytlivemanager"
   },
   "description": ""

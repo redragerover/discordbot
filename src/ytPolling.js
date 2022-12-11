@@ -61,7 +61,7 @@ export const statusHandler = (client) => {
   client.user.setActivity("Andy offline", { type: "PLAYING" });
   const streamToLive = (canonicalURL) => {
     client.user.setActivity(`🔴LIVE w/ PORTLAND ANDY!🔴`, {
-      type: "STREAMING",
+      type: "WATCHING",
       url: canonicalURL,
     });
   };

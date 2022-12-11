@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import {
   twitterUrlPurifier,
   UTM_Purifier,
-  getLiveVideoURLFromChannelID,
+  getYoutubeLiveStatusFromChannelID,
 } from "ytlivemanager/urlUtils.js";
 import {
   catchingTubePoll,
@@ -26,7 +26,7 @@ const execute = (command, cb) => {
 };
 const uwuifyFilter = (toBeUwufied) => {
   const nonRecursiveCommand = toBeUwufied.replaceAll("!uwuify", "").trim();
-  const cleanMessage = nonRecursiveCommand.replace("'", "").trim();
+  const cleanMessage = nonRecursiveCommand.replaceAll("'", "").trim();
   return cleanMessage;
 };
 client.on("messageCreate", async (message) => {
@@ -41,7 +41,6 @@ client.on("messageCreate", async (message) => {
         return;
       }
       if (repliedTo.content) {
-        //@TODO MUST ADD !UWUIFY filter
         const repliedToClean = uwuifyFilter(repliedTo.content);
         execute(`echo '${repliedToClean}.' | uwuify`, (stdout) => {
           if (stdout) {
@@ -84,15 +83,9 @@ client.on("messageCreate", async (message) => {
     message.reply(utmFreeURL);
   }
 
-  if (lowerCaseCommand.includes("!troop")) {
-    message.send("FUCK U TROOP");
-    return;
-  }
-
   if (lowerCaseCommand.includes("!live")) {
-    const { canonicalURL, isStreaming } = await getLiveVideoURLFromChannelID(
-      ytChannelId
-    );
+    const { canonicalURL, isStreaming } =
+      await getYoutubeLiveStatusFromChannelID(ytChannelId);
     if (canonicalURL && isStreaming) {
       message.reply(canonicalURL);
       return;
