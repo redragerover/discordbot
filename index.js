@@ -29,6 +29,7 @@ const uwuifyFilter = (toBeUwufied) => {
   const cleanMessage = nonRecursiveCommand.replaceAll("'", "").trim();
   return cleanMessage;
 };
+let requestSent = false;
 client.on("messageCreate", async (message) => {
   if (message.content.includes("!uwuify")) {
     const cleanMessage = uwuifyFilter(message.content);
@@ -71,22 +72,26 @@ client.on("messageCreate", async (message) => {
   }
   const lowerCaseCommand = message.content.toLowerCase();
 
-  const { purifiedTwitterUrl } = twitterUrlPurifier(lowerCaseCommand);
+  const { purifiedTwitterUrl } = twitterUrlPurifier(message.content);
 
   if (purifiedTwitterUrl) {
     message.suppressEmbeds(true);
     message.reply(purifiedTwitterUrl);
   }
-  const utmFreeURL = UTM_Purifier(lowerCaseCommand);
+  const utmFreeURL = UTM_Purifier(message.content);
   if (!purifiedTwitterUrl && utmFreeURL) {
     message.suppressEmbeds(true);
     message.reply(utmFreeURL);
   }
 
-  if (lowerCaseCommand.includes("!live")) {
+  if (lowerCaseCommand.includes("!live") && !requestSent) {
     const { canonicalURL, isStreaming } =
       await getYoutubeLiveStatusFromChannelID(ytChannelId);
+    requestSent = true;
     if (canonicalURL && isStreaming) {
+      setTimeout(() => {
+        requestSent = false;
+      }, 20000);
       message.reply(canonicalURL);
       return;
     }
