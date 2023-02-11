@@ -5,7 +5,7 @@ import {
   handleRumbleGroupPoll,
 } from "ytlivemanager";
 import { CatchChnl, DiscordIDs } from "../utils/constants.js";
-const updateChannelMutation = `mutation updateChannel($channelId: String, $isLive: Boolean) {
+const updateChannelMutation = `mutation updateChannel($channelId: String, $isLive: Boolean, $vidUrl: String) {
        updateChannel(channelId: $channelId, isLive: $isLive){
                   name
                   lastLive
@@ -29,6 +29,7 @@ export const catchingTubePoll = (client) => {
       variables: {
         isLive: true,
         channelId: identifier,
+        vidUrl: canonicalURL,
       },
     });
     groupChannel.send(
