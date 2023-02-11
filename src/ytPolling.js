@@ -1,10 +1,18 @@
+import axios from "axios";
 import {
   handleYouTubePoll,
   handleGroupYoutubePoll,
   handleRumbleGroupPoll,
 } from "ytlivemanager";
 import { CatchChnl, DiscordIDs } from "../utils/constants.js";
-
+const updateChannelMutation = `mutation updateChannel($channelId: String, $isLive: Boolean) {
+       updateChannel(channelId: $channelId, isLive: $isLive){
+                  name
+                  lastLive
+                  isLive
+                  channelId
+                }
+              }`;
 const ytChannelId = process.env.youtube_channelId;
 
 const nodeArguments = process.argv;
@@ -15,12 +23,27 @@ export const catchingTubePoll = (client) => {
   const groupChannel = guild.channels.cache.get(
     DiscordIDs.channels.liveCatchChannel
   );
-  const streamToGroupLive = (canonicalURL) => {
+  const streamToGroupLive = (canonicalURL, identifier) => {
+    axios.post(process.env.secretURL, {
+      query: `${updateChannelMutation}`,
+      variables: {
+        isLive: true,
+        channelId: identifier,
+      },
+    });
     groupChannel.send(
       `${DiscordIDs.roles.catchingTube} catcher just went live ${canonicalURL}`
     );
   };
-  const streamChannelOffline = () => {
+  const streamChannelOffline = (identifier) => {
+    axios.post(process.env.secretURL, {
+      query: `${updateChannelMutation}`,
+      variables: {
+        isLive: false,
+        channelId: identifier,
+      },
+    });
+
     console.log("channel went offline");
   };
   handleGroupYoutubePoll({
